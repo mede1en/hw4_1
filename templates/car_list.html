@@ -1,0 +1,11 @@
+{% for car in car_key %}
+<h1>
+    {{ car.name }}
+</h1>
+    <p>{{ car.description }}</p>
+    <img src="{{ car.image.url }}" alt="" width="300" height="200">
+    <p>Производитель: {{ car.manufacturer }}</p>
+    <p>Год выпуска: {{ car.year }}</p>
+    <p>Цена: {{ car.price }}</p>
+    <a href="/car_list/{{ car.id }}/">Подробнее</a>
+{% endfor %}

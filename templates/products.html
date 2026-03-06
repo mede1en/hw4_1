@@ -1,0 +1,8 @@
+<h1>Все товары</h1>
+
+{% for product in products_key %}
+<p>название: {{ product.name }}</p>
+<p>цена:{{ product.price }}</p>
+<p>категория: {{ product.category.name }}</p>
+
+{% endfor %}

@@ -1,0 +1,9 @@
+<h1>Категории</h1>
+
+{% for category in categories_key %}
+
+<a href="/category/{{ category.id }}/">
+<p>{{ category.name }}</p>
+</a>
+
+{% endfor %}

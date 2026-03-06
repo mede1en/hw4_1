@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Person, Category, Tour, Booking, Review
+from tourism.models import Person, Category, Tour, Booking, Review
 
 admin.site.register(Person)
 admin.site.register(Category)

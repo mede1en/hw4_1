@@ -1,0 +1,20 @@
+<h1>Список водителей</h1>
+
+<a href="/create_driver/">Добавить водителя</a>
+
+{% for driver in drivers %}
+
+<p>{{ driver.name_driver }}</p>
+
+<img src="{{ driver.image.url }}" width="100">
+
+<p>{{ driver.choose_car }}</p>
+
+<p>Стаж вождения: {{ driver.experience }} лет</p>
+
+<a href="/drivers_list/{{ driver.id }}/update/">Изменить</a>
+
+<a href="/drivers_list/{{ driver.id }}/delete/">Удалить</a>
+
+
+{% endfor %}

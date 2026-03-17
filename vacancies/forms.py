@@ -43,7 +43,7 @@ class CustomRegisterForm(UserCreationForm):
         )
 
     def save(self, commit=True):
-        user = super().save(commit=False)
+        user = super(CustomRegisterForm).save(commit=False)
         if commit:
             user.save()
         return user

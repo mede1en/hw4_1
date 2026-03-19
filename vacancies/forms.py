@@ -10,7 +10,6 @@ class LoginForm(AuthenticationForm):
 
 class CustomRegisterForm(UserCreationForm):
     full_name = forms.CharField(max_length=100, required=True)
-    photo = forms.ImageField(required=True)
     phone_number = forms.CharField(max_length=20, initial='+996', required=True)
     age = forms.IntegerField(required=True)
     city = forms.CharField(max_length=100, required=True)
@@ -30,7 +29,6 @@ class CustomRegisterForm(UserCreationForm):
             'first_name',
             'last_name',
             'email',
-            'photo',
             'phone_number',
             'age',
             'city',
@@ -43,7 +41,21 @@ class CustomRegisterForm(UserCreationForm):
         )
 
     def save(self, commit=True):
-        user = super(CustomRegisterForm).save(commit=False)
+        user = super().save(commit=False)
+
+        user.full_name = self.cleaned_data.get('full_name')
+        user.email = self.cleaned_data.get('email')
+        user.phone_number = self.cleaned_data.get('phone_number')
+        user.age = self.cleaned_data.get('age')
+        user.city = self.cleaned_data.get('city')
+        user.position = self.cleaned_data.get('position')
+        user.experience_years = self.cleaned_data.get('experience_years')
+        user.education = self.cleaned_data.get('education')
+        user.skills = self.cleaned_data.get('skills')
+        user.github = self.cleaned_data.get('github')
+        user.linkedin = self.cleaned_data.get('linkedin')
+
         if commit:
             user.save()
+
         return user

@@ -1,10 +1,11 @@
 <h1>Заявка</h1>
-<form method="POST" enctype="multipart/form-data">
+<form method="post" enctype="multipart/form-data">
 
     {% csrf_token %}
+    {{ form.errors }}
     {{ form.as_p  }}
 
-    <button type="submit">Отправить</button>
+    <button type="submit" , href="/">Отправить</button>
     <button type="reset">Очистить</button>
 
 

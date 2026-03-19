@@ -2,71 +2,56 @@ from django.shortcuts import render, get_object_or_404
 from .models import Car
 from django.core.paginator import Paginator
 from django.db.models import F 
+from django.views import generic
 
 
-def search_view(request):
-    query = request.GET.get("s", "")
-    if query:
-        cars = Car.objects.filter(name__icontains=query)
-    else:
-        cars = Car.objects.none()
-    return render(
-        request,
-        'car_list.html',
-        {'car_key': cars}
-    )
+class SearchView(generic.ListView):
+    template_name = 'car_list.html'
+    context_object_name = 'car_key'
+    model = Car
 
-
-# def Kiafacts_view(request):
-#     if request.method == 'GET':
-#         return HttpResponse('Kia made in South Korea')
-
-# def BMWfacts_view(request):
-#     if request.method == 'GET':
-#         return HttpResponse('BMW made in Germany ✨❤️')
+    def get_queryset(self):
+        return self.model.objects.filter(name_book__icontains=self.request.GET.get('s'))
     
-# def Toyotafacts_view(request):
-#     if request.method == 'GET':
-#         return HttpResponse('<img src="https://scene7.toyota.eu/is/image/toyotaeurope/toy_cor19_tpo_brandpriimgatlsdfront-2:Large-Landscape?' \
-#         'ts=1769976838098&resMode=sharp2&op_usm=1.75,0.3,2,0&fmt=png-alpha" >')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['s'] = self.request.GET.get('s')
+        return context
 
 
+class CarListView(generic.ListView):
+    template_name = 'car_list.html'
+    model = Car
+    context_object_name = 'car_key'
+    paginate_by = 2
 
-def car_list_view(req):
-    if req.method == 'GET':
-        cars = Car.objects.all().order_by('-id')
-        paginator = Paginator(cars, 2) 
-        page = req.GET.get('page')
-        page_obj = paginator.get_page(page)
-
-        return render(
-            req, 
-            'car_list.html', 
-            {
-                'car_key': page_obj
-            }
-        )
+    def get_queryset(self):
+        return self.model.objects.all().order_by('-id')
     
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['car_key'] = context['page_obj']
+        return context
 
+class CarDetailView(generic.DetailView):
+    template_name = 'car_detail.html'
+    context_object_name = 'car_id_key'
+    pk_url_kwarg = 'id'
+    model = Car
 
-def car_detail_view(req, id):
-    car_id = get_object_or_404(Car, id=id)
-    views_car = req.session.get('viewed_car', [])
+    def get_object(self, queryset = None):
+        obj = super().get_object(queryset)
+        request = self.request
+    
+        views_car = request.session.get('viewed_car', [])
 
-    if id not in views_car:
+        if obj.pk not in views_car:
+            Car.objects.filter(pk=obj.pk).update(
+                views = F("views")+1
+                )
+            views_car.append(obj.pk)
+            request.session['views_car'] = views_car
 
-        car_id.views = F('views') + 1
-        car_id.save()
-        car_id.refresh_from_db()
-
-        views_car.append(id)   
-        req.session['viewed_car'] = views_car
-        req.session.modified = True
-
-    return render(
-        req,
-        'car_detail.html',
-        {
-            'car_id_key': car_id
-        }
-    )
+            obj.refresh_from_db()
+        return obj
+    
